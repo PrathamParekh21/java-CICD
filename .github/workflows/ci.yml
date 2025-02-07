@@ -30,6 +30,10 @@ jobs:
     
     - name: Verify Build Artifacts
       run: ls -l build/libs
+      
+    - name: List build directory (Debugging Step)
+      run: ls -R build/libs
+
 
     - name: Build and Push Docker Image
       uses: mr-smithers-excellent/docker-build-push@v4

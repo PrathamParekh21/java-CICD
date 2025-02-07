@@ -1,7 +1,4 @@
-# This workflow will build a Java project with Gradle
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
+name: Java CI/CD Pipeline for COSC 1209
 
 on:
   push:
@@ -10,36 +7,42 @@ on:
     branches: [ main ]
 
 jobs:
-  build-java:
-
-    runs-on: ubuntu-latest
-    
+  simple-message:
+    name: Print Welcome Message
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-    - uses: actions/checkout@v2
+      - name: Display Message
+        run: echo "Hi, I am from COSC 1209 class"
 
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
+  build-java:
+    name: Build and Deploy Java App
+    runs-on: ubuntu-latest
+    needs: simple-message
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
 
-    - name: Build with Gradle
-      run: ./gradlew clean build
-    
-    - name: Verify Build Artifacts
-      run: ls -l build/libs
-      
-    - name: List build directory (Debugging Step)
-      run: ls -R build/libs
+      - name: Grant execute permission for Gradlew
+        run: chmod +x gradlew
 
+      - name: Build with Gradle
+        run: ./gradlew build
 
-    - name: Build and Push Docker Image
-      uses: mr-smithers-excellent/docker-build-push@v4
-      with:
-        image: pratham2425/demo-app
-        registry: docker.io
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-         
+      - name: List Build Directory (Debugging Step)
+        run: ls -l build/libs
+
+      - name: Build and Push Docker Image
+        uses: mr-smithers-excellent/docker-build-push@v4
+        with:
+          image: pratham2425/demo-app
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}

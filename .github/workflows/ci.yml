@@ -26,9 +26,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: |
-            chmod +x gradlew
-            ./gradlew clean build
+      run: ./gradlew clean build
     
     - name: Verify Build Artifacts
       run: ls -l build/libs
